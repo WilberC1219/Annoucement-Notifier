@@ -1,0 +1,99 @@
+title Wilber Claudio CS-355 Project
+
+participant Google Accounts oauth
+participant User
+participant Wilber's Server
+participant Google API'S
+
+note over User:User's browser makes \nrequest to root of site
+User->(1)Wilber's Server: GET / \nHost:localhost:3000
+
+Wilber's Server->(1)User: code: 200 and\nintoPage.html (Project Info)
+
+note over User: User read info Page\nThen clicks link to form
+
+User->(1)Wilber's Server: GET /userPrompt\nHost:localhost:3000
+
+Wilber's Server->(1)User:code: 200 and\nindex.html (Form to \nbe submitted)
+
+note over User:User Fills out the form\n(Event info and list of \nemails)
+
+User->(1)Wilber's Server: GET /submitted?eventName=${Name}&eventDesc=${Desc}\n&eventDate=${YYYY-MM-DD}&start-time=${HH:MM}&\nend-time=${HH:MM}&emails=${email1,email2,...}\n																											Host:localhost:3000
+note over Wilber's Server:Generates state and stores\n{user_event, user_state} into\n**states** array
+Wilber's Server->(1)User: code: 302 redirect\nLocation: https://accounts.google.com/o/oauth2/auth?\nclient_id=${client_id}&redirect_uri=${redirectUri}\n&scope=https://www.googleapis.com/auth/calendar.events\n&state=${state}&response_type=code\n\n(User is redirected to login to their gmail and grant permission to\n my project to add events to their google calendar. The state is used to\n find their event when they are redirected back to **Wilber's Server**)
+
+note over User: Browser makes request to Google oAuth and\nforwards all the paramters from the link it\nrecieved from **Wilber's Server**
+
+alt Could be shortcircuited if the user is already logged into gmail and has granted permission before.
+
+User->(1) Google Accounts oauth: GET /o/oauth2/auth?\nclient_id=${client_id}\n&redirect_uri=${redirectUri}&scope=https://www.googleapis.com/auth/calendar.events\n&state=${state}&response_type=code\n\n																Host: https://accounts.google.com
+
+Google Accounts oauth->(1)User:Code: 200\nPrompts the user to login to their gmail account
+
+User->(1) Google Accounts oauth: User logged in
+
+Google Accounts oauth->(1)User: code: 200\nUser is asked if they would like to grant ${scope} permissions to the app associated with \n${client_id}
+
+User->(1) Google Accounts oauth: User grants permission to the app associated with ${client_id}
+end 
+
+Google Accounts oauth->(1)User:Code: 302, redirect\nLocation:localhost:3000/cal_authorized?code=${code}&state=${state}\n\n(Redirect user back to **Wilber's Server**. The code is the user's permission for ${client_id}\n to interact with this user's gmail account under ${scope} guidlines) 
+
+note over User:Browser creates a request to \nlocalhost:3000/cal_authorized\nwhile forwarding {code,state}
+
+User->(1)Wilber's Server: GET /cal_authorized?code=${code}&state=${state}\n																								Host:localhost:3000
+
+note over Wilber's Server:Uses state value to find the user's event
+
+
+Wilber's Server->(1)Google API'S:POST /token\nHost:https://oauth2.googleapis.com\n+{client_id, client_secret, code, redirect_uri, grant_type}\n\n(Sends {client_id, client_secret, code, redirect_uri, grant_type} to get the access token.)
+
+Google API'S->(1)Wilber's Server:code:200\nincludes access token
+
+note over Wilber's Server:Calls recieve_AccessToken function\nwhich will retrieve the access token from\nthe response sent by the **Google Token Endpoint**.\nThen calls the add_User_Event function
+
+Wilber's Server->(1)Google API'S:POST /calendar/v3/calendars/primary/events\nPost Headers: Authorization: 'Bearer ${access_token}`,\n																							Accept: application/json\n																							Content-Type: application/json\nPost Data: ${calendar_id, summary. description, start, end}\nHost:https://www.googleapis.com
+
+
+Google API'S->(1)Wilber's Server: code: 201\nEvent has been created and added to the user's google calendar
+
+note over Wilber's Server: calls received_API_Reponse function.\nSince a successful response from the\nGoogle Calendar API was received, the\napp will call the send_Email_script function
+
+Wilber's Server->(1)User: code: 302 redirect\nLocation: https://accounts.google.com/o/oauth2/auth?\nclient_id=${client_id}&redirect_uri=${redirectUri}\n&scope=https://www.googleapis.com/auth/script.send_mail\n&state=${state}&response_type=code\n\n(User is redirected to login to their gmail and grant permission to\n my project to send out emails from their gmail account. The state is used to\n find their event when they are redirected back to **Wilber's Server**)
+
+note over User:Browser makes request to Google oAuth and\nforwards all the paramters from the link it\nrecieved from **Wilber's Server**
+
+alt Could be shortcircuited if the user is already logged into gmail and has granted permission before.
+
+User->(1) Google Accounts oauth: GET /o/oauth2/auth?\nclient_id=${client_id}\n&redirect_uri=${redirectUri}&scope=https://www.googleapis.com/auth/script.send_mail\n&state=${state}&response_type=code\n\n																Host: https://accounts.google.com
+
+Google Accounts oauth->(1)User:Code: 200\nPrompts the user to login to their gmail account
+
+User->(1) Google Accounts oauth: User logged in
+
+Google Accounts oauth->(1)User: code: 200\nUser is asked if they would like to grant ${scope} permissions to the app associated with \n${client_id}
+
+User->(1) Google Accounts oauth: User grants permission to the app associated with ${client_id}
+end 
+
+Google Accounts oauth->(1)User:Code: 302, redirect\nLocation:localhost:3000/script_authorized?code=${code}&state=${state}\n\n(Redirect user back to **Wilber's Server**. The code is the user's permission for ${client_id}\n to interact with this user's gmail account under ${scope} guidlines) 
+
+note over User:Browser creates a request to \nlocalhost:3000/script_authorized\nwhile forwarding {code,state}
+
+User->(1)Wilber's Server: GET /script_authorized?code=${code}&state=${state}\n	
+
+note over Wilber's Server:Uses state value to find the user's event
+
+Wilber's Server->(1)Google API'S:POST /token\nHost:https://oauth2.googleapis.com\n+{client_id, client_secret, code, redirect_uri, grant_type}\n\n(Sends {client_id, client_secret, code, redirect_uri, grant_type} to get the access token.)
+
+Google API'S->(1)Wilber's Server:code:200\nincludes access token
+
+note over Wilber's Server:Calls receive_AccessToken function\nwhich will retrieve the access token from\nthe response sent by the **Google Token API EndPoint**.\nThen calls the send_Email_Script function
+
+Wilber's Server->(1)Google API'S:POST /v1/scripts/${script_Id}:run\nPost Headers: Authorization: 'Bearer ${access_token}`,\n																							Accept: application/json\n																							Content-Type: application/json\nPost Data:${function, parameters[]}\nHost:https://script.googleapis.com
+
+Google API'S->(1)Wilber's Server: code: 201\nAll the emails have been sent out
+
+note over Wilber's Server: calls received_API_Reponse function.\nSince a successful response from the\nGoogle App Scripts API was received, the\napp will now redirect the user to their google calender event
+
+Wilber's Server->(1)User: code: 302 redirect\nLocation: https://www.google.com/calendar/event?\neid=${eid}

@@ -1,0 +1,17 @@
+//THIS IS TO BE USED ON GOOGLE APPS SCRIPT!
+//Go to script.google.com/home and create a project and 
+//create a script file then copy and paste this code
+//then deploy it and link it to your google cloud project 
+//and get the script_id and paste it into 
+// https://script.googleapis.com/v1/scripts/${script_id}:run
+// in googleCredentials.json file
+
+function sendEmails(send_To_List, email_Subject, email_Body) {
+  if(send_To_List === undefined){
+    //do nothing
+  }
+  else{
+    let arr_Email = emails.split(",");
+    arr_Email.forEach(email => MailApp.sendEmail(email, email_Subject, email_Body));
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<!--
+
+	<style>
+			body, form{
+				margin: 0 auto;
+				max-width:800px;
+				overflow-x:hidden;
+			}
+			fieldset{
+				display: flex;
+			}
+			input#artist{
+				flex-grow:100;
+				margin: 0 20px;
+			}
+		</style>
+-->
+<html>
+	<head>
+		<title>Wilber's Project!</title>
+	</head>
+	<body>
+		<form action="/submitted" method="GET">
+				<label for="eventName">Event Name</label>
+				<input type="text" name="eventName">
+				<br><br>
+				<label for="eventDesc">Event Description:</label><br>
+				<textarea name="eventDesc" rows="4" cols="50"></textarea>
+				<br><br>
+				<label for="eventDate">Event Date</label>
+				<input type="date" name="eventDate" 
+					min="2022-05-00">
+				<br><br>
+				<label for="eventStartTime">Start Time (est)</label>
+				<input type="time" name="start-time">
+				<label for="eventEndTime">End Time (est)</label>
+				<input type="time" name="end-time">
+				<br><br>
+				<label for="emails">Enter list of email addresses (Each separated by a comma):</label>
+				<br>
+				<input type="email" id="emails" name="emails" multiple style="width: 500px;" >
+				<br><br>
+				<label for="prompt">click to submit form</label>
+				<input type="submit" value="Submit" />
+		</form>
+	</body>
+</html>

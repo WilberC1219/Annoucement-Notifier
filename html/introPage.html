@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Welcome to Wilber's CS 355 Project</title>
+		<style>
+			body, form{
+				margin: 0 auto;
+				max-width:800px;
+				overflow-x:hidden;
+			}
+			fieldset{
+				display: flex;
+			}
+			input#artist{
+				flex-grow:100;
+				margin: 0 20px;
+			}
+		</style>
+	</head>
+    <h1>Welcome to Wilber Claudio's Final project</h1>
+	<body>
+		My project uses both the Google Calendar API and the Google Apps Script API.
+		The project will allow the user to annouce some event, which will be added to their google calendar by the app, and also inform a list of people who they 
+		would like to email about the event.(In order to use this Project the user must have a gmail account).
+        <a href="http://localhost:3000/userPrompt"> Next Page</a>
+	</body>
+	<h4>User Inputs:</h4>
+	<ol>
+		<li>The event Name</li>
+		<li>A description about the event</li>
+		<li>The date of the event</li>
+		<li>The start time of the event (in eastern time)</li>
+		<li>The end time of the event (in eastern time)</li>
+		<li>A list of emails (each email must be separated by a comma)</li>
+	</ol>
+
+	<h4>Email content:</h4>
+	<ul>
+		<li>Subject: `${EventName} on ${eventDate}`</li>
+		<li>Body: `${eventDesc}`</li>
+	</ul>
+
+
+	<h4>Endpoints used:</h4>
+	<ol>
+		<li>https://accounts.google.com/o/oauth2/auth</li>
+		<li>https://oauth2.googleapis.com/token</li>
+		<li>https://www.googleapis.com/calendar/v3/calendars/primary/events</li>
+		<li>https://script.googleapis.com/v1/scripts/${script_id}:run</li>
+	</ol>
+
+
+	<h4>Scopes used:</h4>
+	<ol>
+		<li>https://www.googleapis.com/auth/script.send_mail</li>
+		<li>https://www.googleapis.com/auth/calendar.events</li>
+	</ol>
+
+</html>
