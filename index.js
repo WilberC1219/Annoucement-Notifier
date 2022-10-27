@@ -1,7 +1,3 @@
-//Name: Wilber Claudio Cuny Id:23927882
-//CSCI-355 Final Project
-
-
 /*  If running yourself: */
 
 // 1)make sure to fill in the googleCredentials.json file with client_id and client_secret
