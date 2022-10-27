@@ -1,4 +1,4 @@
-title Wilber Claudio CS-355 Project
+title Wilber CS-355 Project
 
 participant Google Accounts oauth
 participant User
