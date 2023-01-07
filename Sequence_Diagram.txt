@@ -1,4 +1,4 @@
-title Wilber CS-355 Project
+title Annoucement Notifier Diagram
 
 participant Google Accounts oauth
 participant User
